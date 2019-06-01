@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        .abs {
+            position: absolute;
+            top: 50px;
+        }
+        .drop-div {
+            display: inline-block;
+            width: 200px;
+            min-height: 300px;
+            border: 1px solid tomato;
+            vertical-align: top;
+            position: relative;
+            top: 50px;
+        }
+        .drop-div ul {
+            list-style: none;
+        }
+        .drop-div li {
+            background-color: #00B7EE;
+            margin-bottom: 5px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="abs">
+        <ul class="drop-div">
+            <li id="1-1">1-1</li>
+            <li id="1-2">1-2</li>
+            <li id="1-3">1-3</li>
+            <li id="1-4">1-4</li>
+        </ul>
+        <ul class="drop-div">
+            <li id="2-1">2-1</li>
+            <li id="2-2">2-2</li>
+        </ul>
+        <ul class="drop-div">
+            <li id="3-1">3-1</li>
+            <li id="3-2">3-2</li>
+            <li>3-3</li>
+            </ul>
+    </div>
+    <script src="udrag.js"></script>
+    <script type="text/javascript">
+        udrag.init('.drop-div li', function (dragElem, dropToElem, type) {
+            console.log(dragElem, dropToElem, type);
+        }, true);
+    </script>
+</body>
+</html>
