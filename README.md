@@ -6,8 +6,10 @@ HTML5 drag and drop
 
 udrag.init(elements, callback);
 
+- elements 拖动元素
 
-- callback
+- callback 回调
+
 ``` bash
 
 callback(dragElement, dropToElement, insertType) {
