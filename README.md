@@ -18,7 +18,7 @@ callback(dragElement, dropToElement, insertType) { // dragElement 拖动元素 d
 
 ```
 
-- isContinue 是否继续执行拖动换位
+- isContinue 结束后是否继续执行拖放换位，默认true。设置false后，虽然有拖放，但是没有换位。
 ## 示例
 
 [示例](https://jsbin.com/hetijat/edit?html,css,js,output)
