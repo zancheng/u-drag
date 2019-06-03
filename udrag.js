@@ -11,7 +11,7 @@
             l.setAttribute('draggable', true);
             // 如果没有加入唯一ID，就
             if (l.id === '' || l.id === null) {
-              l.id = 'udrop-' + index;
+              l.id = 'udrag-' + index;
             }
             l.addEventListener('dragstart', _CORE.drag); // 拖拽开始
             l.addEventListener('dragover', _CORE.dropOver); // 拖动
