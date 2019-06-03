@@ -2,7 +2,7 @@
   global[plugin] = fn.call(plugin);
 })(window, function () {
   var _callback,
-      _type = ['before', 'after', 'append'],
+      _type = ['before', 'after', 'appendChild'],
       _isContinue,
       _CORE = {
         bindDrop: function(elem) {
@@ -30,20 +30,21 @@
           var moveY = e.pageY; // 放入时的位置
           var elemY = e.target.getBoundingClientRect().top; // 放入到元素的位置
           var elemYCenter = e.target.getBoundingClientRect().height; // 放入到元素的Y轴中心点
-
+          var parentElem = e.target.parentNode; // 父元素
+          var index = _CORE.getIndex(parentElem, e.target); // 获取元素下标
           // 判断放入位置，是在放入元素中心考上，还是靠下，进行区分放入到前面还是后面
           if (moveY < elemY + elemYCenter / 2) { // 加入到上方
             _callback(document.getElementById(l), e.target, _type[0]);
             if (!_isContinue) {
               return false;
             }
-            e.target[_type[0]](document.getElementById(l));
+            parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[index]);
           } else { // 加入到下方
             _callback(document.getElementById(l), e.target, _type[1]);
             if (!_isContinue) {
               return false;
             }
-            e.target[_type[1]](document.getElementById(l));
+            parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[index + 1]);
           }
         },
         dropParent: function (e) {
@@ -53,10 +54,21 @@
           if (!_isContinue) {
             return false;
           }
-          e.target[_type[2]](document.getElementById(l));
+          e.target.appendChild(document.getElementById(l));
         },
         dropOver: function (e) {
           e.preventDefault();
+        },
+         // 获取相对于父元素的下标
+        getIndex: function (parent, child) {
+          var index;
+          for (var x = 0; x < parent.childNodes.length; x++) {
+            if (parent.childNodes[x].id === child.id) {
+              index = x;
+              break;
+            }
+          }
+          return index;
         }
       };
 
