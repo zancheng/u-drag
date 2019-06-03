@@ -59,7 +59,6 @@
         dropOver: function (e) {
           e.preventDefault();
         },
-         // 获取相对于父元素的下标
         getIndex: function (parent, child) {
           var index;
           for (var x = 0; x < parent.childNodes.length; x++) {
