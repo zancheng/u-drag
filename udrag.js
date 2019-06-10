@@ -55,7 +55,6 @@
                 var moveY = e.pageY; // 放入时的位置
                 var elemY = dropElem.getBoundingClientRect().top; // 放入到元素的位置
                 var elemYCenter = dropElem.getBoundingClientRect().height; // 放入到元素的Y轴中心点
-                console.log(moveY, elemY, elemYCenter);
                 // 判断放入位置，是在放入元素中心靠上，还是靠下，进行区分放入到前面还是后面
                 if (moveY < elemY + elemYCenter / 2) { // 加入到上方
                     _callback(document.getElementById(l), dropElem, _type[0]);
