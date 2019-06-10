@@ -6,18 +6,22 @@
         _isContinue,
         _CORE = {
             bindDrop: function(elem) {
-                var list = [].slice.call(document.querySelectorAll(elem));
-                list.forEach(function (l, index) {
-                    l.setAttribute('draggable', true);
-                    // 如果没有加入唯一ID，就新增
-                    if (l.id === '' || l.id === null) {
-                        l.id = 'udrop-' + index;
-                    }
-                    l.addEventListener('dragstart', _CORE.drag); // 拖拽开始
-                    l.addEventListener('dragover', _CORE.dropOver); // 拖动
-                    l.addEventListener('drop', _CORE.drop); // 放入
-                    l.parentNode.addEventListener('drop', _CORE.dropParent); // 放入到父级
-                    l.parentNode.addEventListener('dragover', _CORE.dropOver); // 拖动到父级
+                var parentElem = [].slice.call(document.querySelectorAll(elem));
+                parentElem.forEach(function (p, index) {
+                    var childElem = [].slice.call(p.children);
+                    // 循环子元素，加入绑定事件
+                    childElem.forEach(function (l, index1) {
+                        l.setAttribute('draggable', true);
+                        // 如果没有加入唯一ID，就新增
+                        if (l.id === '' || l.id === null) {
+                            l.id = 'udrop-' + index + '-' + index1;
+                        }
+                        l.addEventListener('dragstart', _CORE.drag); // 拖拽开始
+                        l.addEventListener('dragover', _CORE.dropOver); // 拖动
+                        l.addEventListener('drop', _CORE.drop); // 放入
+                    })
+                    p.addEventListener('drop', _CORE.dropParent); // 放入到父级
+                    p.addEventListener('dragover', _CORE.dropOver); // 拖动到父级
                 });
             },
             drag: function(e) {
