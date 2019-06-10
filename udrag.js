@@ -31,12 +31,12 @@
                 var dragElem = document.getElementById(l); // 拖动的元素
                 var dropElem = e.target; // 拖入的元素
                 var parentElem = dropElem.parentNode; // 父元素
-                var index; // 获取元素下标
+                var dragIndex; // 获取元素下标
                 var bool = true;
                 while (bool) {
                     // 判断是否有相同的父级元素
                     if (parentElem.parentNode.isEqualNode(dragElem.parentNode.parentNode)) {
-                        index = _CORE.getIndex(parentElem, dropElem);
+                        dragIndex = _CORE.getIndex(parentElem, dropElem);
                         bool = false;
                     } else {
                         dropElem = parentElem;
@@ -58,13 +58,13 @@
                     if (!_isContinue) {
                         return false;
                     }
-                    parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[index]);
+                    parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[dragIndex]);
                 } else { // 加入到下方
                     _callback(document.getElementById(l), dropElem, _type[1]);
                     if (!_isContinue) {
                         return false;
                     }
-                    parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[index + 1]);
+                    parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[dragIndex + 1]);
                 }
             },
             dropParent: function (e) {
@@ -79,6 +79,7 @@
             dropOver: function (e) {
                 e.preventDefault();
             },
+            // 获取相对于父级元素的位置
             getIndex: function (parent, child) {
                 var index;
                 for (var x = 0; x < parent.childNodes.length; x++) {
