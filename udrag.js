@@ -9,13 +9,10 @@
                 var parentElem = [].slice.call(document.querySelectorAll(elem));
                 parentElem.forEach(function (p, index) {
                     var childElem = [].slice.call(p.children);
-                    // 循环子元素，加入绑定事件
                     childElem.forEach(function (l, index1) {
                         l.setAttribute('draggable', true);
-                        // 如果没有加入唯一ID，就新增
-                        if (l.id === '' || l.id === null) {
-                            l.id = 'udrop-' + index + '-' + index1;
-                        }
+                        // 如果没有加入唯一udropId，就新增
+                        l.dataset.udropId = 'udrop-' + index + '-' + index1;
                         l.addEventListener('dragstart', _CORE.drag); // 拖拽开始
                         l.addEventListener('dragover', _CORE.dropOver); // 拖动
                         l.addEventListener('drop', _CORE.drop); // 放入
@@ -25,59 +22,67 @@
                 });
             },
             drag: function(e) {
-                e.dataTransfer.setData("Text", e.target.id);
+                e.dataTransfer.setData("Text", e.target.dataset.udropId);
             },
             drop: function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 var l = e.dataTransfer.getData('Text');
 
-                var dragElem = document.getElementById(l); // 拖动的元素
-                var dropElem = e.target; // 拖入的元素
+                var dragElem = document.querySelector('[data-udrop-id="'+ l +'"]'); // 拖动的元素
+                var dropElem = _CORE.getDropElem(e.target); // 拖入的元素
                 var parentElem = dropElem.parentNode; // 父元素
                 var dragIndex; // 获取元素下标
-                var bool = true;
-                while (bool) {
-                    // 判断是否有相同的父级元素
-                    if (parentElem.parentNode.isEqualNode(dragElem.parentNode.parentNode)) {
-                        dragIndex = _CORE.getIndex(parentElem, dropElem);
-                        bool = false;
-                    } else {
-                        dropElem = parentElem;
-                        parentElem = parentElem.parentNode;
-                    }
-                    if (dragElem.parentNode === null) {
-                        bool = false;
-                        console.error('ERROR: 拖动元素的DOM结构好像有点问题哦');
-                    }
-                }
 
+                // 判断是否有相同的父级元素
+                var bool = true; // 是否跳出判断
+                var copyDragElem = dragElem;
+                var copyDropElem = dropElem;
+                var copyParentElem = parentElem;
+                for (;copyParentElem.parentNode;) {
+                    for (;copyDragElem.parentNode.parentNode;) {
+                        if (copyParentElem.parentNode.isEqualNode(copyDragElem.parentNode.parentNode)) {
+                            dragIndex = _CORE.getIndex(parentElem, dropElem);
+                            bool = false;
+                            break;
+                        } else {
+                            copyDragElem = copyDragElem.parentNode;
+                        }
+                    }
+                    if (!bool) {
+                        break;
+                    }
+                    copyDropElem = copyParentElem;
+                    copyParentElem = copyParentElem.parentNode;
+                    copyDragElem = dragElem;
+                }
                 var moveY = e.pageY; // 放入时的位置
                 var elemY = dropElem.getBoundingClientRect().top; // 放入到元素的位置
                 var elemYCenter = dropElem.getBoundingClientRect().height; // 放入到元素的Y轴中心点
                 // 判断放入位置，是在放入元素中心靠上，还是靠下，进行区分放入到前面还是后面
                 if (moveY < elemY + elemYCenter / 2) { // 加入到上方
-                    _callback(document.getElementById(l), dropElem, _type[0]);
+                    _callback(dragElem, dropElem, _type[0]);
                     if (!_isContinue) {
                         return false;
                     }
-                    parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[dragIndex]);
+                    parentElem.insertBefore(dragElem, parentElem.childNodes[dragIndex]);
                 } else { // 加入到下方
-                    _callback(document.getElementById(l), dropElem, _type[1]);
+                    _callback(dragElem, dropElem, _type[1]);
                     if (!_isContinue) {
                         return false;
                     }
-                    parentElem.insertBefore(document.getElementById(l), parentElem.childNodes[dragIndex + 1]);
+                    parentElem.insertBefore(dragElem, parentElem.childNodes[dragIndex + 1]);
                 }
             },
             dropParent: function (e) {
                 e.preventDefault();
                 var l = e.dataTransfer.getData('Text'); // 获取拖动的元素id
-                _callback(document.getElementById(l), e.target, _type[2]);
+                var dropElem = document.querySelector('[data-udrop-id="'+ l +'"]');
+                _callback(dropElem, e.target, _type[2]);
                 if (!_isContinue) {
                     return false;
                 }
-                e.target.appendChild(document.getElementById(l));
+                e.target.appendChild(dropElem);
             },
             dropOver: function (e) {
                 e.preventDefault();
@@ -86,12 +91,23 @@
             getIndex: function (parent, child) {
                 var index;
                 for (var x = 0; x < parent.childNodes.length; x++) {
-                    if (parent.childNodes[x].id === child.id) {
-                        index = x;
-                        break;
+                    if (parent.childNodes[x].dataset) {
+                        if (parent.childNodes[x].dataset.udropId === child.dataset.udropId) {
+                            index = x;
+                            break;
+                        }
                     }
                 }
                 return index;
+            },
+            getDropElem: function (elem) {
+                while (elem) {
+                    if (elem.dataset.udropId) {
+                        return elem;
+                    } else {
+                        elem = elem.parentNode;
+                    }
+                }
             }
         };
 
